@@ -1,0 +1,45 @@
+.container {
+    background-color: white;
+    text-align: center;
+    margin: 0px auto 0px auto;
+    width: 480px;
+}
+
+.card {
+    height: 70px;
+    width: 70px;
+}
+
+.card-title {
+    color: black;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+
+#keyboard {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#keyboard div {
+    display: flex;
+}
+
+.keyboard-row {
+    margin: 0.2rem 0;
+}
+
+.keyboard-button {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.5rem;
+    margin: 0 2px;
+    border-radius: 5px;
+    border: 3px solid black;
+    background-color: white;
+    cursor: pointer;
+    text-transform: uppercase;
+}

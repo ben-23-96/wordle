@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+</head>
+<title>Document</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid text-center">
+            <a class="navbar-brand" href="#">Bens Wordle</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="#">Highscores</a>
+                    <% if (!loggedin) { %>
+                        <a class="nav-link" href="/register">Create Account</a>
+                        <a class="nav-link" href="/login">Sign in</a>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <% if (loggedin) { %>
+        <div class="modal fade" id="gameEndModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalTitle">
+                        </h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <%- user %>
+                        </div>
+                        <p id="modalCountdown"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } else {%>
+            <div class="modal fade" id="gameEndModal" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ModalTitle"></h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Sign in or create an account below to keep track of your scores</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-secondary" href="/login">Sign in</a>
+                            <a type="button" class="btn btn-primary" href="/register">Create Account</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+                <!-- Button trigger modal -->
+                <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#gameEndModal">
+                Launch demo modal
+            </button>-->
+
+                <!--<span data-bs-toggle="modal" data-bs-target="#gameEndModal"></span>-->
+
+                <!-- Modal -->
+
+
+
+                <section class="py-4 d-flex justify-content-center">
+                    <div class="container">
+                        <div class="card-group row row-cols-5">
+                        </div>
+                    </div>
+                </section>
+
+                <div id="keyboard">
+                    <div class="keyboard-row">
+                        <button class="keyboard-button" id="q">q</button>
+                        <button class="keyboard-button" id="w">w</button>
+                        <button class="keyboard-button" id="e">e</button>
+                        <button class="keyboard-button" id="r">r</button>
+                        <button class="keyboard-button" id="t">t</button>
+                        <button class="keyboard-button" id="y">y</button>
+                        <button class="keyboard-button" id="u">u</button>
+                        <button class="keyboard-button" id="i">i</button>
+                        <button class="keyboard-button" id="o">o</button>
+                        <button class="keyboard-button" id="p">p</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="keyboard-button" id="a">a</button>
+                        <button class="keyboard-button" id="s">s</button>
+                        <button class="keyboard-button" id="d">d</button>
+                        <button class="keyboard-button" id="f">f</button>
+                        <button class="keyboard-button" id="g">g</button>
+                        <button class="keyboard-button" id="h">h</button>
+                        <button class="keyboard-button" id="j">j</button>
+                        <button class="keyboard-button" id="k">k</button>
+                        <button class="keyboard-button" id="l">l</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="keyboard-button">Backspace</button>
+                        <button class="keyboard-button" id="z">z</button>
+                        <button class="keyboard-button" id="x">x</button>
+                        <button class="keyboard-button" id="c">c</button>
+                        <button class="keyboard-button" id="v">v</button>
+                        <button class="keyboard-button" id="b">b</button>
+                        <button class="keyboard-button" id="n">n</button>
+                        <button class="keyboard-button" id="m">m</button>
+                        <button class="keyboard-button">Enter</button>
+                    </div>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+                    crossorigin="anonymous"></script>
+                <script type="text/javascript" src="scripts/script.js"></script>
+</body>
+
+</html>

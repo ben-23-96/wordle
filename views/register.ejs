@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <title>Register</title>
+    <!-- the form awesome library is used to add icons to our form -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <!-- include the stylesheet file -->
+    <link href="css/loginstyle.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div class="login">
+        <h1>Create Account</h1>
+        <form action="/new-user" method="post">
+            <label for="username">
+                <!-- font awesome icon -->
+                <i class="fas fa-user"></i>
+            </label>
+            <input type="text" name="username" placeholder="Username" id="username" required>
+            <label for="password">
+                <i class="fas fa-lock"></i>
+            </label>
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <input type="submit" value="Create">
+        </form>
+    </div>
+    <div>
+        <% if (messages.error) { %>
+            <p style="color:red">
+                <%- messages.error %>
+            </p>
+            <% } %>
+                <% if (messages.success) { %>
+                    <p style="color:green">
+                        <%- messages.success %>
+                    </p>
+                    <% } %>
+    </div>
+</body>
+
+</html>

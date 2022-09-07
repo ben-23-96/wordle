@@ -1,0 +1,26 @@
+{
+  "name": "wordle",
+  "version": "1.0.0",
+  "description": "wordle game for browser",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "ben speakman",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.2",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2",
+    "mysql2": "^2.3.3",
+    "node-fetch": "^3.2.10",
+    "node-schedule": "^2.1.0"
+  }
+}
