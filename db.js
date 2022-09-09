@@ -20,7 +20,7 @@ pool.getConnection((err, connection) => {
         throw err;
     }
     console.log('Database connected successfully');
-    connection.release();
+    pool.releaseConnection(connection);
 });
 
 module.exports = pool; 

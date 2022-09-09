@@ -44,14 +44,14 @@ app.get('/register', (req, res) => {
 })
 
 app.get('/dailyword', (req, res) => {
-    fs.readFile('dailyword.json', 'utf8', function readFileCallback(err, data) {
+    connection.query('SELECT * FROM dailyword', function (err, result, fields) {
         if (err) {
             console.log(err);
         } else {
-            dailyWord = JSON.parse(data);
-            res.send({ word: dailyWord['word'] })
+            dailyWord = result[0]['word']
+            res.send({ word: dailyWord })
         }
-    });
+    })
 })
 
 app.post('/new-user', function (req, res) {
