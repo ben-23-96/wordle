@@ -43,3 +43,7 @@
     cursor: pointer;
     text-transform: uppercase;
 }
+
+.large-button {
+    font-size: 0.8rem;
+}

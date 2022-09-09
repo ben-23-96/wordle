@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser")
 const path = require('path')
 const bcrypt = require('bcryptjs')
 const connection = require('./db')
-const fs = require('fs')
 
 
 const app = express()
