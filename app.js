@@ -5,29 +5,8 @@ const cookieParser = require("cookie-parser")
 const path = require('path')
 const bcrypt = require('bcryptjs')
 const connection = require('./db')
-const axios = require('axios').default
-const schedule = require('node-schedule');
+const fs = require('fs')
 
-
-const dailyWord = { word: 'start' }
-
-async function fetchWord() {
-    try {
-        url = "https://random-word-api.herokuapp.com/word?length=5"
-        const response = await axios.get(url);
-        dailyWord['word'] = response['data'][0];
-        console.log(dailyWord['word']);
-        console.log('express fetch')
-        return dailyWord['word']
-    } catch (error) {
-        console.error(error);
-    }
-}
-const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.tz = 'Etc/UTC';
-const job = schedule.scheduleJob(rule, fetchWord);
-job.invoke()
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -65,7 +44,14 @@ app.get('/register', (req, res) => {
 })
 
 app.get('/dailyword', (req, res) => {
-    res.send({ word: dailyWord['word'] })
+    fs.readFile('dailyword.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            dailyWord = JSON.parse(data);
+            res.send({ word: dailyWord['word'] })
+        }
+    });
 })
 
 app.post('/new-user', function (req, res) {

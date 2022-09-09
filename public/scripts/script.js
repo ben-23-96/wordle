@@ -188,7 +188,7 @@ const keyInputListener = {
         const modalCountdown = document.createElement('p')
         modalCountdown.setAttribute('id', 'modalCountdown')
         modalBody.appendChild(modalCountdown)
-        timer = setInterval(this.modalTimer, 250) // display timer
+        timer = setInterval(this.modalTimer, 500) // display timer
         this.timer = timer
         myModal.show()
     },
@@ -282,6 +282,5 @@ if (localStorage.getItem('datePlayed') != null) { // if player has played and ha
         localStorage.clear()
     }
 }
-
 
 
