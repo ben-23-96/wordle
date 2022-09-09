@@ -95,6 +95,9 @@ const keyInputListener = {
         if (this.wordGuessed || this.cardId >= 25) {
             this.updateHighscore()
             this.activeToday = false
+            let now = new Date()
+            date = now.toISOString().split('T')[0]
+            localStorage.setItem('datePlayed', date)
             localStorage.setItem('disableKeys', true)
             setTimeout(() => { this.showModal() }, 500)
         }
@@ -270,7 +273,15 @@ function load() {
     }
 }
 
-//localStorage.clear()
-load()
+if (localStorage.getItem('datePlayed') != null) { // if player has played and has data in localstorage
+    let now = new Date()
+    date = now.toISOString().split('T')[0]
+    if (localStorage.getItem('datePlayed') === date) { // if player played today
+        load()
+    } else {
+        localStorage.clear()
+    }
+}
+
 
 
