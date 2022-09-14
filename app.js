@@ -14,8 +14,8 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, "views"));
 app.use(session({
     secret: 'secret',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
 }));
 app.use(flash())
 app.use(cookieParser());
@@ -117,6 +117,20 @@ app.post('/sign-in', function (req, res, next) {
         }
     })
 }, updateHighscore)
+
+app.get('/logout', (req, res) => {
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                res.status(400).send('Unable to log out')
+            } else {
+                res.redirect('/')
+            }
+        });
+    } else {
+        res.end()
+    }
+})
 
 app.post('/highscore', function (req, res, next) {
     if (req.session.loggedin === true) {
