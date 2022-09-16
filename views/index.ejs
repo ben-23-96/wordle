@@ -36,24 +36,7 @@
         </div>
     </nav>
 
-    <div class="modal fade" id="highscoreModal" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ModalTitle"></h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="gameEndModal" role="dialog">
+    <div class="modal fade" id="gameModal" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -64,18 +47,16 @@
                 </div>
                 <% if (loggedin) { %>
                     <div class="modal-body">
-                        <div>
-                            <%- user %>
-                        </div>
                     </div>
                     <% } else {%>
                         <div class="modal-body">
-                            <p>Sign in or create an account below to keep track of your scores</p>
                         </div>
                         <div class="modal-footer">
-                            <a type="button" class="btn btn-secondary" href="/login">Sign in</a>
-                            <a type="button" class="btn btn-primary" href="/register">Create Account</a>
-
+                            <p class="text-center">Sign in or create an account below to keep track of your scores</p>
+                            <div class="align-self-center mx-auto">
+                                <a type="button" class="btn btn-secondary modal-btn" href="/login">Sign in</a>
+                                <a type="button" class="btn btn-primary modal-btn" href="/register">Create Account</a>
+                            </div>
                         </div>
                         <% } %>
             </div>
@@ -130,8 +111,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="scripts/script.js"></script>
-    <script type="text/javascript" src="scripts/highscore.js"></script>
+    <script type="text/javascript" src="scripts/modalScripts.js"></script>
+    <script type="text/javascript" src="scripts/mainScript.js"></script>
 </body>
 
 </html>

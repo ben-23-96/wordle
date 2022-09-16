@@ -1,4 +1,3 @@
-const fs = require('fs');
 const axios = require('axios').default
 const connection = require('./db')
 

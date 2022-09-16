@@ -95,13 +95,25 @@ const keyInputListener = {
         if (this.wordGuessed || this.cardId >= 25) {
             this.updateHighscore()
             this.activeToday = false
-            let now = new Date()
-            date = now.toISOString().split('T')[0]
-            localStorage.setItem('datePlayed', date)
-            localStorage.setItem('disableKeys', true)
-            setTimeout(() => { this.showModal() }, 500)
+            this.setLocalStorage()
+            const myEvent = new CustomEvent("gameEnd", {
+                detail: 'event thats listener calls the function to display the end game modal, function located in modalScripts.js',
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            })
+            document.dispatchEvent(myEvent);
         }
         this.playerGuess = ""
+    },
+    setLocalStorage: function () { //sets keys in localstorage to be used on page loads
+        let now = new Date()
+        date = now.toISOString().split('T')[0]
+        localStorage.setItem('datePlayed', date)
+        localStorage.setItem('disableKeys', true)
+        localStorage.setItem('wordGuessedToday', this.wordGuessed)
+        localStorage.setItem('word', this.word)
+        localStorage.setItem('guesses', JSON.stringify(this.guesses))
     },
     updateHighscore: async function () { // posts highscore to database
         try {
@@ -159,58 +171,6 @@ const keyInputListener = {
             let style = card.getAttribute('style')
             localStorage.setItem(`card${this.cardId - 5 + i} style`, style)
         }
-    },
-    showModal: function () { // generates post game modal
-        var myModal = new bootstrap.Modal(document.getElementById("gameEndModal"), {});
-        modalBody = document.querySelector('#gameEndModal .modal-body')
-        modalTitle = document.querySelector('#gameEndModal .modal-title')
-        if (this.wordGuessed) {
-            modalTitle.innerHTML = "Correct"
-        } else {
-            modalTitle.innerHTML = "Incorrect"
-        }
-        const Para1 = document.createElement('p')
-        Para1.innerHTML = `The word was ${this.word}`
-        modalBody.appendChild(Para1)  // dislpay word
-        const Para2 = document.createElement('p')
-        Para2.innerHTML = `Your guesses were:`
-        modalBody.appendChild(Para2)
-        const guessHTMLList = document.createElement("ol");
-        modalBody.appendChild(guessHTMLList)
-        for (let guess of this.guesses) { // display guesses
-            let listItem = document.createElement("li");
-            listItem.innerHTML = guess
-            guessHTMLList.appendChild(listItem)
-        }
-        const Para3 = document.createElement('p')
-        Para3.innerHTML = 'Time until next word:'
-        modalBody.appendChild(Para3)
-        const modalCountdown = document.createElement('p')
-        modalCountdown.setAttribute('id', 'modalCountdown')
-        modalBody.appendChild(modalCountdown)
-        timer = setInterval(this.modalTimer, 500) // display timer
-        this.timer = timer
-        myModal.show()
-    },
-    modalTimer: function () { // timer counts down to midnight when a new word loads, displays the time on post game modal
-        var now = new Date();
-        var night = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() + 1, // the next day, ...
-            0, 0, 0 // ...at 00:00:00 hours
-        );
-        var msToMidnight = night.getTime() - now.getTime();
-        var hours = Math.floor((msToMidnight % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((msToMidnight % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((msToMidnight % (1000 * 60)) / 1000);
-        let modalCountdown = document.querySelector('#modalCountdown')
-        modalCountdown.innerHTML = ('0' + hours).slice(-2) + ' : ' + ('0' + minutes).slice(-2) + ' : ' + ('0' + seconds).slice(-2)
-        if (!document.querySelector(".modal").classList.contains("show")) { // disables timer when modal closed
-            clearInterval(this.timer);
-        }
-
-
     },
 };
 
@@ -273,14 +233,25 @@ function load() {
     }
 }
 
-if (localStorage.getItem('datePlayed') != null) { // if player has played and has data in localstorage
-    let now = new Date()
-    date = now.toISOString().split('T')[0]
-    if (localStorage.getItem('datePlayed') === date) { // if player played today
-        load()
-    } else {
-        localStorage.clear()
-    }
+let now = new Date()
+date = now.toISOString().split('T')[0]
+if (localStorage.getItem('datePlayed') === date) { // if player played today
+    load()
+    const gameEndEvent = new CustomEvent("gameEnd", {
+        detail: 'event thats listener calls the function to display the end game modal, function located in modalScripts.js',
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+    })
+    document.dispatchEvent(gameEndEvent);
+} else {
+    localStorage.clear()
+    const gameStartEvent = new CustomEvent("gameStart", {
+        detail: 'event thats listener calls the function to display the start game modal, function located in modalScripts.js',
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+    })
+    document.dispatchEvent(gameStartEvent);
 }
-
 
