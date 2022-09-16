@@ -1,0 +1,1 @@
+Clone of the popular wordle game. Express backend with all the game logic in client side javascript. MySQL database to store user details such as login and highscores. Uploaded to heroku visit : https://bens-wordle.herokuapp.com/
