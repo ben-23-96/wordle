@@ -53,6 +53,16 @@ app.get('/dailyword', (req, res) => {
     })
 })
 
+app.get('/load-highscores', (req, res) => {
+    connection.query('SELECT users.username AS Player, scores.correct AS Correct, scores.incorrect AS Incorrect FROM scores INNER JOIN users ON users.user_id=scores.user_id ORDER BY correct DESC LIMIT 10;', function (err, result, fields) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send({ data: result })
+        }
+    })
+})
+
 app.post('/new-user', function (req, res) {
     let username = req.body.username;
     let password = req.body.password;

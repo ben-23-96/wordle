@@ -1,3 +1,28 @@
+#highscoreButton {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.55);
+    font-weight: 400;
+}
+
+#highscoreButton:hover {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+#highscoreButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+}
+
+table {
+    width: 100%;
+}
+
 .container {
     background-color: white;
     text-align: center;

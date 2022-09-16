@@ -23,7 +23,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" href="#">Highscores</a>
+                    <button class="btn btn-light btn-link" id="highscoreButton"
+                        onclick="displayHighscoreModal()">Highscores</button>
                     <% if (!loggedin) { %>
                         <a class="nav-link" href="/register">Create Account</a>
                         <a class="nav-link" href="/login">Sign in</a>
@@ -34,6 +35,23 @@
             </div>
         </div>
     </nav>
+
+    <div class="modal fade" id="highscoreModal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalTitle"></h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="gameEndModal" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -113,6 +131,7 @@
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="scripts/script.js"></script>
+    <script type="text/javascript" src="scripts/highscore.js"></script>
 </body>
 
 </html>

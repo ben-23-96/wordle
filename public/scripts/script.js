@@ -162,8 +162,8 @@ const keyInputListener = {
     },
     showModal: function () { // generates post game modal
         var myModal = new bootstrap.Modal(document.getElementById("gameEndModal"), {});
-        modalBody = document.querySelector('.modal-body')
-        modalTitle = document.querySelector('.modal-title')
+        modalBody = document.querySelector('#gameEndModal .modal-body')
+        modalTitle = document.querySelector('#gameEndModal .modal-title')
         if (this.wordGuessed) {
             modalTitle.innerHTML = "Correct"
         } else {
