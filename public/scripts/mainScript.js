@@ -40,7 +40,7 @@ async function fetchWord() {
 }
 fetchWord()
 
-const keyInputListener = {
+const keyInputListener = { // handles displaying the user inputs on screen, and checking them
     cardId: 1,
     word: '',
     playerGuess: '',
@@ -48,21 +48,22 @@ const keyInputListener = {
     guesses: [],
     wordGuessed: false,
     timer: '',
-    activeToday: true,
+    keysActive: true,
+    gameCompletedToday: false,
     keyboardInput: function (event) {
-        if (this.activeToday) {
+        if (this.keysActive) {
             this.inputKey = event.key
             this.keyboardEvent()
         }
     },
     onScreenKeyBoardClick: function (event) {
-        if (this.activeToday) {
+        if (this.keysActive) {
             this.inputKey = event.target.innerHTML
             this.keyboardEvent()
         }
     },
-    keyboardEvent: function () {
-        if (this.inputKey.length === 1 && /^[a-zA-Z()]+$/.test(this.inputKey) && this.playerGuess.length < 5) {
+    keyboardEvent: function () { // handles user key inputs
+        if (this.inputKey.length === 1 && /^[a-zA-Z()]+$/.test(this.inputKey) && this.playerGuess.length < 5) { // if key is a letter & guess within the 5 letter limit
             this.inputLetter(this.inputKey)
         };
         if (this.inputKey === 'Backspace' && this.playerGuess.length >= 1) {
@@ -94,7 +95,8 @@ const keyInputListener = {
         }
         if (this.wordGuessed || this.cardId >= 25) {
             this.updateHighscore()
-            this.activeToday = false
+            this.keysActive = false
+            this.gameCompletedToday = true
             this.setLocalStorage()
             const myEvent = new CustomEvent("gameEnd", {
                 detail: 'event thats listener calls the function to display the end game modal, function located in modalScripts.js',
@@ -180,10 +182,15 @@ const keyboardInput = keyInputListener.keyboardInput.bind(keyInputListener)
 
 const keyboardKeys = document.querySelectorAll(".keyboard-button")
 for (let key of keyboardKeys) {
-    key.addEventListener('mousedown', onScreenKeyboardClick)
+    key.addEventListener('mousedown', onScreenKeyboardClick) // onscreen keyboard keys click listener for each key
 }
 
-window.addEventListener('keydown', keyboardInput)
+window.addEventListener('keydown', keyboardInput) // keyboard input listener
+
+const myModal = document.getElementById('gameModal')
+
+myModal.addEventListener('shown.bs.modal', () => { keyInputListener.keysActive = false }) // if modal open disable key input on the game screen
+myModal.addEventListener('hidden.bs.modal', () => { if (!keyInputListener.gameCompletedToday) { keyInputListener.keysActive = true } }) // reactivate key inputs when modal closed if the game has not been completed today
 
 
 function resetAtMidnight() {
@@ -196,7 +203,7 @@ function resetAtMidnight() {
     );
     var msToMidnight = night.getTime() - now.getTime();
     setTimeout(function () {
-        keyInputListener.activeToday = true
+        keyInputListener.keysActive = true
         localStorage.clear()
         fetchWord();              //      <-- This is the function being called at midnight.
         resetAtMidnight();    //      Then, reset again next midnight.
@@ -205,10 +212,10 @@ function resetAtMidnight() {
 
 resetAtMidnight()
 
-function load() {
+function reloadTodaysDispaly() {
     for (const [key, value] of Object.entries(localStorage)) {
         if (key === 'disableKeys') { // if game already played today keep it disabled
-            keyInputListener['activeToday'] = false
+            keyInputListener['keysActive'] = false
             continue
         }
         if (key.includes('card')) {
@@ -233,25 +240,46 @@ function load() {
     }
 }
 
-let now = new Date()
-date = now.toISOString().split('T')[0]
-if (localStorage.getItem('datePlayed') === date) { // if player played today
-    load()
-    const gameEndEvent = new CustomEvent("gameEnd", {
-        detail: 'event thats listener calls the function to display the end game modal, function located in modalScripts.js',
-        bubbles: true,
-        cancelable: true,
-        composed: false,
-    })
-    document.dispatchEvent(gameEndEvent);
-} else {
-    localStorage.clear()
-    const gameStartEvent = new CustomEvent("gameStart", {
-        detail: 'event thats listener calls the function to display the start game modal, function located in modalScripts.js',
-        bubbles: true,
-        cancelable: true,
-        composed: false,
-    })
-    document.dispatchEvent(gameStartEvent);
+function load() { // decide which moadal to load depending on whether user already played toady
+    let now = new Date()
+    date = now.toISOString().split('T')[0]
+    if (localStorage.getItem('datePlayed') === date) { // if player played today
+        reloadTodaysDispaly()
+        const gameEndEvent = new CustomEvent("gameEnd", {
+            detail: 'event thats listener calls the function to display the end game modal, function located in modalScripts.js',
+            bubbles: true,
+            cancelable: true,
+            composed: false,
+        })
+        document.dispatchEvent(gameEndEvent);
+    } else {
+        keyInputListener.gameCompletedToday = false
+        localStorage.clear()
+        const gameStartEvent = new CustomEvent("gameStart", {
+            detail: 'event thats listener calls the function to display the start game modal, function located in modalScripts.js',
+            bubbles: true,
+            cancelable: true,
+            composed: false,
+        })
+        document.dispatchEvent(gameStartEvent);
+    }
 }
 
+load()
+
+function changeDisplayToLoggedIn() { // if user logged in on the session display logged in display on page load
+    const loggedInCookie = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('loggedIn='))
+
+    if (loggedInCookie) {
+        let signInBtn = document.querySelector('#sign-in-button')
+        signInBtn.classList.add('d-none')
+        let createAccountBtn = document.querySelector('#create-account-button')
+        createAccountBtn.classList.add('d-none')
+        let logOutBtn = document.querySelector('#logout-button')
+        logOutBtn.classList.remove('d-none')
+    }
+}
+
+changeDisplayToLoggedIn()

@@ -23,14 +23,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-light btn-link" id="highscoreButton"
+                    <button class="btn btn-light btn-link navbar-button"
                         onclick="displayHighscoreModal()">Highscores</button>
-                    <% if (!loggedin) { %>
-                        <a class="nav-link" href="/register">Create Account</a>
-                        <a class="nav-link" href="/login">Sign in</a>
-                        <% } else {%>
-                            <a class="nav-link" href="/logout">Log out</a>
-                            <% } %>
+                    <button class="btn btn-light btn-link navbar-button sign-in" id="sign-in-button"
+                        onclick="accountModal(event)">Sign
+                        in</button>
+                    <button class="btn btn-light btn-link navbar-button create-account" id="create-account-button"
+                        onclick="accountModal(event)">Create
+                        Account</button>
+                    <a class="nav-link d-none" id="logout-button" href="/logout">Log out</a>
                 </div>
             </div>
         </div>
@@ -45,20 +46,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <% if (loggedin) { %>
-                    <div class="modal-body">
-                    </div>
-                    <% } else {%>
-                        <div class="modal-body">
-                        </div>
-                        <div class="modal-footer">
-                            <p class="text-center">Sign in or create an account below to keep track of your scores</p>
-                            <div class="align-self-center mx-auto">
-                                <a type="button" class="btn btn-secondary modal-btn" href="/login">Sign in</a>
-                                <a type="button" class="btn btn-primary modal-btn" href="/register">Create Account</a>
-                            </div>
-                        </div>
-                        <% } %>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>

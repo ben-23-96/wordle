@@ -1,7 +1,9 @@
 const axios = require('axios').default
 const connection = require('./db')
 
-async function fetchWord() {
+// script is ran every 24 hours at midnight using heroku scheduler
+
+async function fetchWord() { // get a new word from a api and writes to the dailyword table in the database
     try {
         url = "https://random-word-api.herokuapp.com/word?length=5"
         const response = await axios.get(url);

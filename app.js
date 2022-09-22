@@ -5,16 +5,11 @@ const flash = require('express-flash')
 const cookieParser = require("cookie-parser")
 const path = require('path')
 const bcrypt = require('bcryptjs')
-const connection = require('./db')
-
+const connection = require('./db');
 
 const app = express()
 const port = process.env.PORT || 3000
-const sessionStore = new MySQLStore({
-    expiration: 86400000,
-    clearExpired: true,
-    checkExpirationInterval: 90000000,
-}, connection);
+const sessionStore = new MySQLStore({}, connection);
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, "views"));
@@ -24,6 +19,14 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     expires: 86400000,
+    expiration: 86400000,
+    clearExpired: true,
+    checkExpirationInterval: 86400000,
+    cookie: {
+        httpOnly: true,
+        maxAge: 86400000,
+        sameSite: true
+    }
 }));
 app.use(flash())
 app.use(cookieParser());
@@ -33,25 +36,16 @@ app.use(express.static('public'))
 
 
 app.get('/', (req, res) => {
-    console.log(req.session)
     if (req.session.loggedin === true) {
-        username = req.session.name
-        res.render('index', { loggedin: true, user: username })
+        res.render('index')
     } else {
-        res.render('index', { loggedin: false })
+        res.clearCookie('loggedIn')
+        res.render('index')
     }
 
 })
 
-app.get('/login', (req, res) => {
-    res.render('login')
-})
-
-app.get('/register', (req, res) => {
-    res.render('register')
-})
-
-app.get('/dailyword', async (req, res) => {
+app.get('/dailyword', async (req, res) => { // retrieves the dailyword from the dailyword table on the database and sends it back as json {word: dailyword}
     try {
         const [result, fields] = await connection.query('SELECT * FROM dailyword')
         dailyWord = result[0]['word']
@@ -61,7 +55,7 @@ app.get('/dailyword', async (req, res) => {
     }
 })
 
-app.get('/load-highscores', async (req, res) => {
+app.get('/load-highscores', async (req, res) => { // retrieves the top 10 highscores from the scores table in the datbase and sends them back as json {data: highscores}
     try {
         const [result, fields] = await connection.query('SELECT users.username AS Player, scores.correct AS Correct, scores.incorrect AS Incorrect FROM scores INNER JOIN users ON users.user_id=scores.user_id ORDER BY correct DESC LIMIT 10;')
         res.send({ data: result })
@@ -70,11 +64,11 @@ app.get('/load-highscores', async (req, res) => {
     }
 })
 
-app.post('/new-user', async function (req, res) {
+app.post('/new-user', async function (req, res) { // creates a new user in the users table in the database
     let username = req.body.username;
     let password = req.body.password;
     let salt = bcrypt.genSaltSync(10);
-    let passwordHash = bcrypt.hashSync(password, salt);
+    let passwordHash = bcrypt.hashSync(password, salt); // encrypt password
     if (username && password) {
         let user = {
             username: username,
@@ -82,50 +76,42 @@ app.post('/new-user', async function (req, res) {
         }
         try {
             await connection.query('INSERT INTO users SET ?', user)
-            req.flash('success', 'You have successfully signup!');
-            res.redirect('login');
+            res.send({ accountCreateSuccess: 'Account created successfully !' })
         } catch (err) {
             if (err.errno === 1062) {
-                req.flash('error', `Username "${username}" already exists, please choose another.`)
+                res.send({ accountCreateError: 'Username already exists, please choose another.' })
+                return
             }
-            res.render('register')
+            res.send({ accountCreateError: 'An error occurred, please try again.' })
         }
     } else {
-        var error_msg = ''
-        errors.forEach(function (error) {
-            console.error(err)
-            error_msg += error.msg + '<br>'
-        })
-        req.flash('error', error_msg)
-        res.render('register')
+        res.send({ accountCreateError: 'A error occured, please try again.' })
     }
-
 });
 
-
-app.post('/sign-in', async function (req, res, next) {
+app.post('/sign-in', async function (req, res, next) { // signs user in  on the session and creates loggedIn cookie if details found in users table in the database
     let username = req.body.username;
     let password = req.body.password;
     try {
         const [result, fields] = await connection.query('SELECT * FROM users WHERE username = ?', username)
         if (result.length <= 0) { // if user not found
-            req.flash('error', 'Email or password incorrect')
-            res.redirect('/login')
+            res.send({ signInError: 'Incorrect username or password, try again.' })
         }
         else { // if user found
             try {
                 if (bcrypt.compareSync(password, result[0]['password'])) { // sign in
                     req.session.loggedin = true;
                     req.session.name = username;
+                    res.cookie('loggedIn', true, { maxAge: 86400000 })
                     if (req.cookies['resultToday']) { // if user has played today whilst not logged in write todays score to db
                         req.body.result = req.cookies['resultToday']
                         next()
+                        res.send({ signInSuccess: 'User log in successful' })
                         return
                     }
-                    res.redirect('/')
+                    res.send({ signInSuccess: 'User log in successful' })
                 } else {
-                    req.flash('error', 'Email or password incorrect')
-                    res.redirect('/login')
+                    res.send({ signInError: 'Incorrect username or password, try again.' })
                 }
             } catch (err) {
                 console.error(err)
@@ -136,12 +122,13 @@ app.post('/sign-in', async function (req, res, next) {
     }
 }, updateHighscore)
 
-app.get('/logout', (req, res) => {
+app.get('/logout', (req, res) => { // logs users out of the session and clears loggedIn cookie
     if (req.session) {
         req.session.destroy(err => {
             if (err) {
                 res.status(400).send('Unable to log out')
             } else {
+                res.clearCookie('loggedIn')
                 res.redirect('/')
             }
         });
@@ -150,7 +137,7 @@ app.get('/logout', (req, res) => {
     }
 })
 
-app.post('/highscore', function (req, res, next) {
+app.post('/highscore', function (req, res, next) { // writes score to scores table in the datbase using the updateHighscore middleware function if user logged in 
     if (req.session.loggedin === true) {
         next()
         return
@@ -160,7 +147,7 @@ app.post('/highscore', function (req, res, next) {
 }, updateHighscore)
 
 
-async function updateHighscore(req, res, next) {
+async function updateHighscore(req, res, next) { // creates or updates a user entry in the scores table on the database
     try {
         const userData = await connection.query('SELECT user_id FROM users WHERE username = ?', req.session.name) // select user
         let userID = userData[0][0]['user_id']
@@ -177,13 +164,13 @@ async function updateHighscore(req, res, next) {
             }
             await connection.query(`INSERT INTO scores (user_id, correct, incorrect, last_update_date) VALUES (${userID}, ${correct}, ${incorrect}, UTC_DATE())`)
         } else { // if user does have a row in scores table update it
-            let last_update_date = new Date(result[0]['last_update_date'].replace(/\//g, '-'))
+            let last_update_date = new Date(userScoreData[0][0]['last_update_date'].replace(/\//g, '-'))
             let today = new Date()
             if (last_update_date.getUTCDate() != today.getUTCDate() ||
                 last_update_date.getUTCMonth() != today.getUTCMonth() ||
                 last_update_date.getUTCFullYear() != today.getUTCFullYear()) { // only update row if user has not updated already today
-                let userCorrectScore = result[0]['correct']
-                let userIncorrectScore = result[0]['incorrect']
+                let userCorrectScore = userScoreData[0][0]['correct']
+                let userIncorrectScore = userScoreData[0][0]['incorrect']
                 if (req.body.result) {
                     userCorrectScore += 1
                 } else {
@@ -196,9 +183,8 @@ async function updateHighscore(req, res, next) {
     catch (err) {
         console.error(err)
     }
-    res.redirect('/')
 }
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`App listening on port ${port}`)
 })

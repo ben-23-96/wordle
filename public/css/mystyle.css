@@ -1,16 +1,16 @@
-#highscoreButton {
-    text-decoration: none;
-    color: rgba(0, 0, 0, 0.55);
-    font-weight: 400;
+.navbar-button {
+    text-decoration: none !important;
+    color: rgba(0, 0, 0, 0.55) !important;
+    font-weight: 400 !important;
 }
 
-#highscoreButton:hover {
-    color: rgba(0, 0, 0, 0.7);
+.navbar-button:hover {
+    color: rgba(0, 0, 0, 0.7) !important;
 }
 
-#highscoreButton:focus {
-    outline: none;
-    box-shadow: none;
+.navbar-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 table,
